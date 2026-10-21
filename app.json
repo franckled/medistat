@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "MediStat",
-    "slug": "frontend",
+    "name": "THOTIS",
+    "slug": "thotis",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "frontend",
+    "scheme": "thotis",
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
@@ -14,7 +14,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#000000"
+        "backgroundColor": "#06233F"
       },
       "package": "com.emergent.biocalmed.ca1e4x"
     },
@@ -31,7 +31,7 @@
           "image": "./assets/images/splash-image.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#000000"
+          "backgroundColor": "#06233F"
         }
       ],
       "expo-font",
