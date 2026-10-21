@@ -52,5 +52,3 @@
     }
   }
 }
-
-<!-- PROPOSAL ONLY: do not replace app.json until the complete app source and image assets are present in the target repository. Keep the existing iOS/Android identifiers and EAS project ID unless a deliberate new-app decision is made. -->
