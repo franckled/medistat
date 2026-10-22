@@ -9,14 +9,14 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.emergent.biocalmed.ca1e4x"
+      "bundleIdentifier": "fr.thotis.app"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#06233F"
       },
-      "package": "com.emergent.biocalmed.ca1e4x"
+      "package": "fr.thotis.app"
     },
     "web": {
       "bundler": "metro",
