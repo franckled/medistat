@@ -2,6 +2,13 @@ name: THOTIS - iOS cloud build
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - feat/thotis-source-import
+    paths:
+      - "app.json"
+      - "eas.json"
+      - ".github/workflows/thotis-ios-build.yml"
 
 permissions:
   contents: read
