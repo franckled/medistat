@@ -50,7 +50,7 @@ jobs:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: eas project:info
 
-      - name: Build iOS preview
+      - name: Build iOS production
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: eas build --platform ios --profile preview --non-interactive
+        run: eas build --platform ios --profile production --non-interactive
