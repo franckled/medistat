@@ -52,7 +52,7 @@ export default function TabsLayout() {
           options={{
             title: t.label,
             tabBarIcon: ({ color, focused }) => (
-              <Icon name={t.icon} size={24} color={color} weight={focused ? "fill" : "regular"} />
+              <Icon name={t.icon} size={24} color={String(color)} weight={focused ? "fill" : "regular"} />
             ),
           }}
         />
