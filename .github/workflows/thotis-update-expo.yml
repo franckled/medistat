@@ -1,6 +1,13 @@
 name: THOTIS - update Expo dependencies
 
 on:
+  push:
+    branches:
+      - feat/thotis-source-import
+    paths:
+      - ".github/workflows/thotis-update-expo.yml"
+      - "package.json"
+      - "yarn.lock"
   workflow_dispatch:
 
 permissions:
