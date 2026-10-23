@@ -1,3 +1,4 @@
+import { LinearGradient } from "expo-linear-gradient";
 import { ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -27,10 +28,10 @@ export default function AproposScreen() {
         contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + spacing.xl }]}
       >
         <View style={styles.logoBox}>
-          <View style={styles.logo}>
-            <Icon name="Pulse" size={40} color={colors.onBrandPrimary} weight="bold" />
-          </View>
-          <Text style={styles.appName}>MediStat</Text>
+          <LinearGradient colors={[colors.brand, colors.brandPrimary, colors.info]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.logo}>
+            <Icon name="ChartLineUp" size={42} color="#FFFFFF" weight="bold" />
+          </LinearGradient>
+          <Text style={styles.appName}>THOTIS</Text>
           <Text style={styles.tagline}>Les statistiques biomédicales, en clair</Text>
         </View>
 
@@ -71,12 +72,12 @@ const useStyles = makeStyles((colors) => ({
   logo: {
     width: 84,
     height: 84,
-    borderRadius: radius.lg,
+    borderRadius: 26,
     backgroundColor: colors.brandPrimary,
     alignItems: "center",
     justifyContent: "center",
   },
-  appName: { fontFamily: fonts.extrabold, fontSize: fontSize["2xl"], color: colors.onSurface },
+  appName: { fontFamily: fonts.extrabold, fontSize: fontSize["2xl"], color: colors.onSurface, letterSpacing: 2 },
   tagline: { fontFamily: fonts.semibold, fontSize: fontSize.base, color: colors.muted },
   sectionTitle: {
     fontFamily: fonts.extrabold,
