@@ -1,4 +1,4 @@
-import { LinearGradient } from "expo-linear-gradient";
+import { Image } from "expo-image";
 import { ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -28,9 +28,7 @@ export default function AproposScreen() {
         contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + spacing.xl }]}
       >
         <View style={styles.logoBox}>
-          <LinearGradient colors={[colors.brand, colors.brandPrimary, colors.info]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.logo}>
-            <Icon name="ChartLineUp" size={42} color="#FFFFFF" weight="bold" />
-          </LinearGradient>
+          <Image source={require("../../assets/images/icon.png")} contentFit="cover" style={styles.logo} />
           <Text style={styles.appName}>THOTIS</Text>
           <Text style={styles.tagline}>Les statistiques biomédicales, en clair</Text>
         </View>
@@ -73,6 +71,7 @@ const useStyles = makeStyles((colors) => ({
     width: 84,
     height: 84,
     borderRadius: 26,
+    overflow: "hidden",
     backgroundColor: colors.brandPrimary,
     alignItems: "center",
     justifyContent: "center",
