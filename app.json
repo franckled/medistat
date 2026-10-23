@@ -9,7 +9,10 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "fr.thotis.app"
+      "bundleIdentifier": "fr.thotis.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -47,8 +50,15 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "a126bae7-d66e-4436-91f5-e7a8a9be734f"
+        "projectId": "46a0b165-a55c-4fad-80f5-b9105fe16d76"
       }
+    },
+    "owner": "franckled",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/46a0b165-a55c-4fad-80f5-b9105fe16d76"
     }
   }
 }
