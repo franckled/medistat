@@ -28,19 +28,17 @@ export function Field({ field, value, onChange }: Props) {
                 key={opt.value}
                 testID={`option-${field.key}-${opt.value}`}
                 onPress={() => onChange(opt.value)}
-                style={[
+                accessibilityRole="button"
+                accessibilityState={{ selected }}
+                style={({ pressed }) => [
                   styles.option,
                   selected
                     ? { backgroundColor: colors.brandPrimary, borderColor: colors.brandPrimary }
                     : { backgroundColor: colors.surfaceTertiary, borderColor: colors.border },
+                  pressed && styles.optionPressed,
                 ]}
               >
-                <Text
-                  style={[
-                    styles.optionText,
-                    { color: selected ? colors.onBrandPrimary : colors.onSurfaceTertiary },
-                  ]}
-                >
+                <Text style={[styles.optionText, { color: selected ? "#FFFFFF" : colors.onSurfaceTertiary }]}>
                   {opt.label}
                 </Text>
               </Pressable>
@@ -69,10 +67,15 @@ export function Field({ field, value, onChange }: Props) {
         placeholderTextColor={colors.muted}
         keyboardType={isSeries ? "default" : "decimal-pad"}
         multiline={isSeries}
+        selectionColor={colors.brandPrimary}
         style={[
           styles.input,
           isSeries && styles.inputSeries,
-          { borderColor: focused ? colors.brandPrimary : colors.border },
+          {
+            borderColor: focused ? colors.brandPrimary : colors.border,
+            backgroundColor: focused ? "#FFFFFF" : colors.surfaceTertiary,
+          },
+          focused && styles.inputFocused,
         ]}
       />
       {field.help ? <Text style={styles.help}>{field.help}</Text> : null}
@@ -82,52 +85,25 @@ export function Field({ field, value, onChange }: Props) {
 
 const useStyles = makeStyles((colors) => ({
   container: { gap: spacing.sm },
-  labelRow: { flexDirection: "row", alignItems: "baseline", justifyContent: "space-between" },
-  label: {
-    fontFamily: fonts.bold,
-    fontSize: fontSize.base,
-    color: colors.onSurface,
-  },
-  unit: {
-    fontFamily: fonts.semibold,
-    fontSize: fontSize.sm,
-    color: colors.muted,
-  },
+  labelRow: { flexDirection: "row", alignItems: "baseline", justifyContent: "space-between", gap: spacing.sm },
+  label: { fontFamily: fonts.extrabold, fontSize: fontSize.base, color: colors.onSurface },
+  unit: { fontFamily: fonts.bold, fontSize: fontSize.sm, color: colors.brandPrimary },
   input: {
     backgroundColor: colors.surfaceTertiary,
     borderWidth: 1.5,
     borderRadius: radius.md,
     paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md + 2,
+    paddingVertical: spacing.md + 3,
     fontFamily: fonts.semibold,
     fontSize: fontSize.lg,
     color: colors.onSurface,
-    minHeight: 52,
+    minHeight: 54,
   },
-  inputSeries: {
-    minHeight: 88,
-    textAlignVertical: "top",
-    paddingTop: spacing.md,
-  },
-  optionsWrap: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: spacing.sm,
-  },
-  option: {
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm + 2,
-    borderRadius: radius.pill,
-    borderWidth: 1.5,
-  },
-  optionText: {
-    fontFamily: fonts.bold,
-    fontSize: fontSize.base,
-  },
-  help: {
-    fontFamily: fonts.regular,
-    fontSize: fontSize.sm,
-    color: colors.muted,
-    lineHeight: 18,
-  },
+  inputFocused: { shadowColor: colors.brandPrimary, shadowOpacity: 0.09, shadowRadius: 8, shadowOffset: { width: 0, height: 3 } },
+  inputSeries: { minHeight: 92, textAlignVertical: "top", paddingTop: spacing.md },
+  optionsWrap: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
+  option: { paddingHorizontal: spacing.lg, paddingVertical: spacing.md, borderRadius: radius.md, borderWidth: 1.5 },
+  optionPressed: { opacity: 0.85, transform: [{ scale: 0.98 }] },
+  optionText: { fontFamily: fonts.extrabold, fontSize: fontSize.sm },
+  help: { fontFamily: fonts.regular, fontSize: fontSize.sm, color: colors.muted, lineHeight: 19 },
 }));
