@@ -23,30 +23,27 @@ export function Header({ title, subtitle, back, accent, icon }: Props) {
   const tint = accent ?? colors.brandPrimary;
 
   return (
-    <View style={[styles.wrap, { paddingTop: insets.top + spacing.sm }]}>
+    <View style={[styles.wrap, { paddingTop: insets.top + spacing.md }]}>
       {back ? (
         <Pressable
           onPress={() => router.back()}
           testID="header-back"
-          style={[styles.backBtn, { backgroundColor: tint + "18" }]}
+          accessibilityRole="button"
+          accessibilityLabel="Retour"
+          style={[styles.iconTile, { backgroundColor: tint + "18", borderColor: tint + "30" }]}
           hitSlop={8}
         >
           <Icon name="ArrowLeft" size={22} color={tint} weight="bold" />
         </Pressable>
       ) : icon ? (
-        <View style={[styles.backBtn, { backgroundColor: tint + "18" }]}>
-          <Icon name={icon} size={22} color={tint} weight="duotone" />
+        <View style={[styles.iconTile, { backgroundColor: tint + "18", borderColor: tint + "30" }]}>
+          <Icon name={icon} size={23} color={tint} weight="duotone" />
         </View>
       ) : null}
       <View style={styles.textWrap}>
-        <Text style={styles.title} numberOfLines={1}>
-          {title}
-        </Text>
-        {subtitle ? (
-          <Text style={styles.subtitle} numberOfLines={1}>
-            {subtitle}
-          </Text>
-        ) : null}
+        <Text style={styles.kicker}>THOTIS</Text>
+        <Text style={styles.title} numberOfLines={1}>{title}</Text>
+        {subtitle ? <Text style={styles.subtitle} numberOfLines={2}>{subtitle}</Text> : null}
       </View>
     </View>
   );
@@ -58,19 +55,21 @@ const useStyles = makeStyles((colors) => ({
     alignItems: "center",
     gap: spacing.md,
     paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.md,
+    paddingBottom: spacing.lg,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.divider,
   },
-  backBtn: {
-    width: 42,
-    height: 42,
+  iconTile: {
+    width: 48,
+    height: 48,
     borderRadius: radius.md,
+    borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
   },
-  textWrap: { flex: 1 },
-  title: { fontFamily: fonts.extrabold, fontSize: fontSize.xl, color: colors.onSurface },
-  subtitle: { fontFamily: fonts.semibold, fontSize: fontSize.sm, color: colors.muted },
+  textWrap: { flex: 1, gap: 1 },
+  kicker: { color: colors.brandPrimary, fontFamily: fonts.extrabold, fontSize: 9, letterSpacing: 1.6 },
+  title: { fontFamily: fonts.extrabold, fontSize: fontSize.xl, color: colors.onSurface, letterSpacing: -0.3 },
+  subtitle: { fontFamily: fonts.semibold, fontSize: fontSize.sm, color: colors.muted, lineHeight: 18 },
 }));
