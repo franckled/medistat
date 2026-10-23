@@ -1,3 +1,4 @@
+import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
@@ -61,7 +62,7 @@ export default function HomeScreen() {
           <View style={styles.orbBottom} />
           <View style={styles.heroTopline}>
             <View style={styles.brandMark}>
-              <Icon name="Pulse" size={22} color="#FFFFFF" weight="bold" />
+              <Image source={require("../../assets/images/icon.png")} style={styles.brandLogo} contentFit="cover" transition={200} />
             </View>
             <View style={styles.brandTextWrap}>
               <Text style={styles.brandName}>THOTIS</Text>
@@ -216,15 +217,15 @@ const useStyles = makeStyles((colors) => ({
   },
   heroTopline: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
   brandMark: {
-    width: 48,
-    height: 48,
+    width: 50,
+    height: 50,
     borderRadius: 16,
     backgroundColor: "rgba(255,255,255,0.18)",
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.3)",
-    alignItems: "center",
-    justifyContent: "center",
+    overflow: "hidden",
   },
+  brandLogo: { width: "100%", height: "100%" },
   brandTextWrap: { flex: 1, gap: 1 },
   brandName: { color: "#FFFFFF", fontFamily: fonts.extrabold, fontSize: 19, letterSpacing: 1.6 },
   brandCaption: { color: "#D4F7FF", fontFamily: fonts.bold, fontSize: 8, letterSpacing: 1.05 },
