@@ -23,7 +23,7 @@ function toPlainText(r: CalcResult): string {
   lines.push("Rédaction pour une thèse :");
   lines.push(r.thesis);
   lines.push("");
-  lines.push(`— MediStat · ${COPYRIGHT}`);
+  lines.push(`— Thotis · ${COPYRIGHT}`);
   return lines.join("\n");
 }
 
@@ -42,20 +42,20 @@ function toHtml(r: CalcResult): string {
     .join("");
   return `<!DOCTYPE html><html><head><meta charset="utf-8" />
   <style>
-    body { font-family: -apple-system, Helvetica, Arial, sans-serif; color:#1C1917; padding:32px; }
-    h1 { font-size:22px; color:#059669; margin-bottom:4px; }
-    h3 { font-size:14px; color:#78716C; text-transform:uppercase; letter-spacing:.5px; margin:20px 0 6px; }
+    body { font-family: -apple-system, Helvetica, Arial, sans-serif; color:#10233F; padding:32px; }
+    h1 { font-size:22px; color:#079DD7; margin-bottom:4px; }
+    h3 { font-size:14px; color:#647B92; text-transform:uppercase; letter-spacing:.5px; margin:20px 0 6px; }
     table { width:100%; border-collapse:collapse; }
-    td { padding:6px 0; border-bottom:1px solid #E7E5E4; font-size:14px; }
+    td { padding:6px 0; border-bottom:1px solid #D9E7F2; font-size:14px; }
     td.val { text-align:right; font-weight:700; }
-    .thesis { margin-top:24px; padding:16px; background:#F4EFE6; border-radius:12px; font-size:14px; line-height:1.6; }
+    .thesis { margin-top:24px; padding:16px; background:#E8F6FB; border-radius:12px; font-size:14px; line-height:1.6; }
     .thesis h3 { margin-top:0; }
-    footer { margin-top:32px; font-size:12px; color:#78716C; text-align:center; }
+    footer { margin-top:32px; font-size:12px; color:#647B92; text-align:center; }
   </style></head><body>
     <h1>${r.title}</h1>
     ${sections}
     <div class="thesis"><h3>Rédaction pour une thèse</h3>${r.thesis}</div>
-    <footer>MediStat &nbsp;·&nbsp; ${COPYRIGHT}</footer>
+    <footer>Thotis &nbsp;·&nbsp; ${COPYRIGHT}</footer>
   </body></html>`;
 }
 
@@ -162,7 +162,7 @@ export function ResultCard({ result }: { result: CalcResult }) {
         <ActionButton icon="FilePdf" label="PDF" onPress={onPdf} color={colors.brandSecondary} testID="pdf-button" />
       </View>
 
-      <Text style={styles.copyright}>MediStat · {COPYRIGHT}</Text>
+      <Text style={styles.copyright}>Thotis · {COPYRIGHT}</Text>
 
       {flash ? (
         <View style={styles.flash} testID="result-flash">
