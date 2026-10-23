@@ -15,23 +15,23 @@ export function Chip({ label, selected, onPress, color, testID }: Props) {
   const styles = useStyles();
   const { colors } = useTheme();
   const accent = color ?? colors.brandPrimary;
+
   return (
     <Pressable
       testID={testID}
       onPress={onPress}
       accessibilityRole="button"
-      style={[
+      accessibilityState={{ selected }}
+      style={({ pressed }) => [
         styles.chip,
         selected
           ? { backgroundColor: accent, borderColor: accent }
           : { backgroundColor: colors.surfaceTertiary, borderColor: colors.border },
+        pressed && styles.pressed,
       ]}
     >
       <Text
-        style={[
-          styles.label,
-          { color: selected ? colors.onBrandPrimary : colors.onSurfaceTertiary },
-        ]}
+        style={[styles.label, { color: selected ? "#FFFFFF" : colors.onSurfaceTertiary }]}
         numberOfLines={1}
       >
         {label}
@@ -42,15 +42,13 @@ export function Chip({ label, selected, onPress, color, testID }: Props) {
 
 const useStyles = makeStyles(() => ({
   chip: {
-    height: 36,
+    minHeight: 40,
     flexShrink: 0,
     justifyContent: "center",
     paddingHorizontal: spacing.lg,
     borderRadius: radius.pill,
     borderWidth: 1.5,
   },
-  label: {
-    fontFamily: fonts.bold,
-    fontSize: fontSize.base,
-  },
+  pressed: { transform: [{ scale: 0.97 }], opacity: 0.9 },
+  label: { fontFamily: fonts.extrabold, fontSize: fontSize.sm },
 }));
