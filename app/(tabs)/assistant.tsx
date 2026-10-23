@@ -123,6 +123,9 @@ export default function AssistantScreen() {
                   onPress={() => answer(a)}
                   style={({ pressed }) => [styles.answerCard, pressed && styles.answerPressed]}
                 >
+                  <View style={[styles.answerIcon, { backgroundColor: [colors.brandPrimary, colors.brandSecondary, colors.info, colors.brandTertiary][i % 4] + "20" }]}>
+                    <Icon name={["UsersThree", "ChartBar", "Pulse", "Target"][i % 4]} size={23} color={[colors.brandPrimary, colors.brandSecondary, colors.info, colors.brandTertiary][i % 4]} weight="duotone" />
+                  </View>
                   <View style={styles.answerText}>
                     <Text style={styles.answerLabel}>{a.label}</Text>
                     {a.hint ? <Text style={styles.answerHint}>{a.hint}</Text> : null}
@@ -168,6 +171,7 @@ const useStyles = makeStyles((colors) => ({
     borderColor: colors.border,
   },
   answerPressed: { opacity: 0.9, transform: [{ scale: 0.99 }], borderColor: colors.brandSecondary },
+  answerIcon: { width: 46, height: 46, borderRadius: 15, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.border },
   answerText: { flex: 1, gap: 3 },
   answerLabel: { fontFamily: fonts.extrabold, fontSize: fontSize.lg, color: colors.onSurface },
   answerHint: { fontFamily: fonts.semibold, fontSize: fontSize.sm, color: colors.muted },
