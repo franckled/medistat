@@ -4,9 +4,12 @@ import type { PropsWithChildren } from "react";
 
 export default function Root({ children }: PropsWithChildren) {
   return (
-    <html lang="en" style={{ height: "100%" }}>
+    <html lang="fr" style={{ height: "100%" }}>
       <head>
         <meta charSet="utf-8" />
+        <title>Thotis — Statistiques biomédicales</title>
+        <meta name="theme-color" content="#0A3A65" />
+        <meta name="description" content="Comprendre, calculer et choisir les méthodes statistiques biomédicales." />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta
           name="viewport"
