@@ -1,6 +1,6 @@
 // Core visual tokens for Thotis: crisp biomedical blue, turquoise, and playful accent colors.
 import { useMemo } from "react";
-import { Appearance, StyleSheet, useColorScheme } from "react-native";
+import { Appearance, StyleSheet, useColorScheme, type ImageStyle, type TextStyle, type ViewStyle } from "react-native";
 
 export type ColorScheme = "light" | "dark";
 
@@ -60,14 +60,14 @@ export function useTheme(): { scheme: ColorScheme; colors: ThemeColors } {
   return { scheme, colors: themes[scheme] ?? themes.light };
 }
 
-export function makeStyles<T extends Record<string, unknown>>(
-  factory: (colors: ThemeColors) => T,
+// React Native 0.88 no longer exposes NamedStyles on the StyleSheet namespace.
+type NamedStyles<T> = { [P in keyof T]: ViewStyle | TextStyle | ImageStyle };
+
+export function makeStyles<T extends NamedStyles<T> | NamedStyles<any>>(
+  factory: (colors: ThemeColors) => T & NamedStyles<any>,
 ): () => T {
   return function useStyles(): T {
     const { colors } = useTheme();
-    return useMemo(
-      () => StyleSheet.create(factory(colors) as never) as T,
-      [colors],
-    );
+    return useMemo(() => StyleSheet.create(factory(colors)), [colors]);
   };
 }
