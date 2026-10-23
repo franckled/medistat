@@ -47,6 +47,20 @@ export default function CalculsScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[styles.list, { paddingBottom: bottomChrome + spacing.xl }]}
       >
+        <View style={styles.listIntro}>
+          <View style={styles.listIntroIcon}>
+            <Icon name="ChartLineUp" size={25} color={colors.brandPrimary} weight="duotone" />
+          </View>
+          <View style={styles.listIntroText}>
+            <Text style={styles.listIntroTitle}>À vous de jouer</Text>
+            <Text style={styles.listIntroSubtitle}>
+              {list.length} outil{list.length > 1 ? "s" : ""} dans « {CATEGORIES.find((c) => c.id === cat)?.label} »
+            </Text>
+          </View>
+          <View style={styles.listIntroBadge}>
+            <Icon name="Sparkle" size={18} color={colors.brandSecondary} weight="fill" />
+          </View>
+        </View>
         {list.map((calc) => {
           const accent = colors[calc.accent];
           return (
@@ -74,6 +88,12 @@ export default function CalculsScreen() {
 
 const useStyles = makeStyles((colors) => ({
   screen: { flex: 1, backgroundColor: colors.surface },
+  listIntro: { flexDirection: "row", alignItems: "center", gap: spacing.md, padding: spacing.md, marginBottom: spacing.xs, borderRadius: radius.lg, backgroundColor: colors.surfaceSecondary },
+  listIntroIcon: { width: 48, height: 48, borderRadius: 16, backgroundColor: "#FFFFFF", alignItems: "center", justifyContent: "center" },
+  listIntroText: { flex: 1, gap: 3 },
+  listIntroTitle: { fontFamily: fonts.extrabold, fontSize: fontSize.lg, color: colors.onSurface },
+  listIntroSubtitle: { fontFamily: fonts.semibold, fontSize: fontSize.sm, color: colors.muted, lineHeight: 17 },
+  listIntroBadge: { width: 32, height: 32, borderRadius: 11, backgroundColor: colors.brandSecondary + "18", alignItems: "center", justifyContent: "center" },
   chipRow: {
     height: 56,
     justifyContent: "center",
