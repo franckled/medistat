@@ -1,4 +1,4 @@
-import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
@@ -18,8 +18,6 @@ import { usesNativeTabs } from "@/src/navigation";
 import { makeStyles, useTheme } from "@/src/theme";
 import { fonts, fontSize, radius, spacing } from "@/src/typography";
 
-const SUCCESS_IMG =
-  "https://images.unsplash.com/photo-1655998233171-ee5b130acba5?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2Mzl8MHwxfHNlYXJjaHwxfHxwbGF5ZnVsJTIwYWJzdHJhY3QlMjBjb2xvcmZ1bCUyMHNoYXBlcyUyMGJhY2tncm91bmR8ZW58MHx8fHwxNzkwNjcyODg5fDA&ixlib=rb-4.1.0&q=85";
 
 export default function AssistantScreen() {
   const styles = useStyles();
@@ -73,12 +71,18 @@ export default function AssistantScreen() {
       >
         {reco ? (
           <View style={styles.recoWrap} testID="assistant-reco">
-            <View style={styles.recoHero}>
-              <Image source={{ uri: SUCCESS_IMG }} style={styles.recoImg} contentFit="cover" />
+            <LinearGradient
+              colors={[colors.brand, "#075A87", colors.brandPrimary, colors.info]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.recoHero}
+            >
+              <View style={styles.recoGlow} />
+              <Icon name="ChartLineUp" size={64} color="#B4FFF0" weight="duotone" />
               <View style={styles.recoBadge}>
-                <Icon name="Confetti" size={28} color={colors.onBrandSecondary} weight="fill" />
+                <Icon name="Confetti" size={27} color="#FFFFFF" weight="fill" />
               </View>
-            </View>
+            </LinearGradient>
             <Text style={styles.recoLabel}>Test recommandé</Text>
             <Text style={styles.recoTitle}>{reco.test}</Text>
             <Text style={styles.recoWhy}>{reco.why}</Text>
@@ -168,8 +172,8 @@ const useStyles = makeStyles((colors) => ({
   answerLabel: { fontFamily: fonts.extrabold, fontSize: fontSize.lg, color: colors.onSurface },
   answerHint: { fontFamily: fonts.semibold, fontSize: fontSize.sm, color: colors.muted },
   recoWrap: { gap: spacing.md },
-  recoHero: { height: 160, borderRadius: radius.lg, overflow: "hidden", justifyContent: "center", alignItems: "center" },
-  recoImg: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0 },
+  recoHero: { height: 168, borderRadius: radius.lg, overflow: "hidden", justifyContent: "center", alignItems: "center", gap: spacing.xs },
+  recoGlow: { position: "absolute", width: 180, height: 180, borderRadius: 90, backgroundColor: "#FFFFFF", opacity: 0.08, right: -35, top: -65 },
   recoBadge: {
     width: 64,
     height: 64,
