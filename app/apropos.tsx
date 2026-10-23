@@ -28,7 +28,7 @@ export default function AproposScreen() {
         contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + spacing.xl }]}
       >
         <View style={styles.logoBox}>
-          <Image source={require("../assets/images/icon.png)} contentFit="cover" style={styles.logo} />
+          <Image source={require("../assets/images/icon.png")} contentFit="cover" style={styles.logo} />
           <Text style={styles.appName}>THOTIS</Text>
           <Text style={styles.tagline}>Les statistiques biomédicales, en clair</Text>
         </View>
