@@ -1,6 +1,4 @@
-// Nunito font family + type scale for the whole app.
-// Font files live in assets/fonts and are loaded in app/_layout.tsx.
-
+// Nunito type family and shared layout rhythm for Thotis.
 export const fonts = {
   regular: "Nunito-Regular",
   semibold: "Nunito-SemiBold",
@@ -10,12 +8,12 @@ export const fonts = {
 
 export const fontSize = {
   xs: 11,
-  sm: 12,
-  base: 14,
-  lg: 16,
-  xl: 20,
-  "2xl": 24,
-  "3xl": 30,
+  sm: 13,
+  base: 15,
+  lg: 17,
+  xl: 21,
+  "2xl": 26,
+  "3xl": 34,
 } as const;
 
 export const spacing = {
@@ -29,8 +27,8 @@ export const spacing = {
 } as const;
 
 export const radius = {
-  sm: 6,
-  md: 12,
-  lg: 20,
+  sm: 8,
+  md: 16,
+  lg: 24,
   pill: 999,
 } as const;
