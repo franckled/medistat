@@ -11,6 +11,7 @@ import {
 } from "@/src/components/charts/charts";
 import { Accordion } from "@/src/components/ui/Accordion";
 import { Header } from "@/src/components/ui/Header";
+import { Icon } from "@/src/components/ui/Icon";
 import { COURSES, Course, CourseChart } from "@/src/content/cours";
 import { usesNativeTabs } from "@/src/navigation";
 import { makeStyles, useTheme } from "@/src/theme";
