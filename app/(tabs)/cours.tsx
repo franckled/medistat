@@ -14,7 +14,7 @@ import { Header } from "@/src/components/ui/Header";
 import { COURSES, Course, CourseChart } from "@/src/content/cours";
 import { usesNativeTabs } from "@/src/navigation";
 import { makeStyles, useTheme } from "@/src/theme";
-import { fonts, fontSize, spacing } from "@/src/typography";
+import { fonts, fontSize, radius, spacing } from "@/src/typography";
 
 function ChartFor({ chart }: { chart: CourseChart }) {
   if (chart === "compare") return <CompareChart />;
@@ -65,9 +65,17 @@ export default function CoursScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[styles.content, { paddingBottom: bottomChrome + spacing.xl }]}
       >
-        <Text style={styles.intro}>
-          Touchez une carte pour dérouler le rappel et son illustration.
-        </Text>
+        <View style={styles.introCard}>
+          <View style={styles.introIcon}>
+            <Icon name="Lightbulb" size={23} color={colors.brandTertiary} weight="fill" />
+          </View>
+          <View style={styles.introCopy}>
+            <Text style={styles.introTitle}>Apprendre en un coup d’œil</Text>
+            <Text style={styles.intro}>
+              Ouvrez une fiche pour voir le rappel, le schéma et les points clés.
+            </Text>
+          </View>
+        </View>
         {COURSES.map((course) => (
           <Accordion
             key={course.id}
@@ -89,7 +97,11 @@ export default function CoursScreen() {
 const useStyles = makeStyles((colors) => ({
   screen: { flex: 1, backgroundColor: colors.surface },
   content: { padding: spacing.lg, gap: spacing.md },
-  intro: { fontFamily: fonts.semibold, fontSize: fontSize.sm, color: colors.muted, marginBottom: spacing.xs },
+  introCard: { flexDirection: "row", alignItems: "center", gap: spacing.md, padding: spacing.md, backgroundColor: colors.surfaceSecondary, borderRadius: radius.lg, marginBottom: spacing.xs },
+  introIcon: { width: 46, height: 46, borderRadius: 15, backgroundColor: "#FFFFFF", alignItems: "center", justifyContent: "center" },
+  introCopy: { flex: 1, gap: 3 },
+  introTitle: { fontFamily: fonts.extrabold, fontSize: fontSize.base, color: colors.onSurface },
+  intro: { fontFamily: fonts.semibold, fontSize: fontSize.sm, color: colors.muted, lineHeight: 18 },
   chartBox: {
     backgroundColor: colors.surface,
     borderRadius: 12,
