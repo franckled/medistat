@@ -1,98 +1,58 @@
-// Design tokens for this app. Light theme only.Always modify the colors and theme to Dark, Light or Dark and Light according to the design guidelines.
-//
-// The keys match the "color" block of /app/design_guidelines.json. Fill the
-// values from that file (or from the user's brand colors). Keep every key; do
-// not add a second theme or colors file; do not write color literals in
-// components.
-//
-// How the names work: a plain key is a background, and its `on` partner is the
-// text or icon color that sits on top of it. Always use them as a pair.
-//   <View style={{ backgroundColor: colors.brandPrimary }}>
-//     <Text style={{ color: colors.onBrandPrimary }}>Continue</Text>
-//   </View>
-//
-// Styling a screen or component: build the sheet with makeStyles so colors
-// and layout live together and follow the active scheme:
-//   const useStyles = makeStyles((colors) => ({
-//     card: { backgroundColor: colors.surfaceSecondary, padding: 16 },
-//     title: { color: colors.onSurfaceSecondary, fontSize: 16 },
-//   }));
-//   function Screen() {
-//     const styles = useStyles();
-//     return <View style={styles.card}><Text style={styles.title}>Hi</Text></View>;
-//   }
-// For color props that are not styles (icon color, placeholderTextColor,
-// ActivityIndicator) read useTheme().colors inside the component.
-// Never call StyleSheet.create with color values at module level; it cannot
-// follow the scheme.
-//
-// To support dark mode later: add `dark` to `themes` with every key filled.
-// Nothing else changes; the device setting takes over automatically.
-// Feel free to add as many new colors as you need to support the design guidelines.
-
+// Core visual tokens for Thotis: crisp biomedical blue, turquoise, and playful accent colors.
 import { useMemo } from "react";
 import { Appearance, StyleSheet, useColorScheme } from "react-native";
 
 export type ColorScheme = "light" | "dark";
 
 const light = {
-  // Surfaces
-  surface: "#FDFBF7",
-  onSurface: "#1C1917",
-  surfaceSecondary: "#F4EFE6",
-  onSurfaceSecondary: "#1C1917",
+  // App surfaces
+  surface: "#F3F8FD",
+  onSurface: "#10233F",
+  surfaceSecondary: "#E8F6FB",
+  onSurfaceSecondary: "#10233F",
   surfaceTertiary: "#FFFFFF",
-  onSurfaceTertiary: "#1C1917",
-  surfaceInverse: "#1C1917",
-  onSurfaceInverse: "#FDFBF7",
-  muted: "#78716C",
+  onSurfaceTertiary: "#17324D",
+  surfaceInverse: "#10233F",
+  onSurfaceInverse: "#F8FCFF",
+  muted: "#647B92",
 
-  // Brand — Mint / Rose / Amber playful accents
-  brand: "#059669",
+  // Thotis brand — biomedical blue, cyan, and a lively violet/amber contrast
+  brand: "#0A3A65",
   onBrand: "#FFFFFF",
-  brandPrimary: "#10B981",
+  brandPrimary: "#079DD7",
   onBrandPrimary: "#FFFFFF",
-  brandSecondary: "#F43F5E",
+  brandSecondary: "#5B5CE2",
   onBrandSecondary: "#FFFFFF",
-  brandTertiary: "#FBBF24",
-  onBrandTertiary: "#1C1917",
+  brandTertiary: "#FFBF47",
+  onBrandTertiary: "#17324D",
 
-  // Status
-  success: "#10B981",
+  // Status and visualisation accents
+  success: "#0CA88A",
   onSuccess: "#FFFFFF",
-  warning: "#F59E0B",
-  onWarning: "#FFFFFF",
-  error: "#EF4444",
+  warning: "#E99B17",
+  onWarning: "#172B43",
+  error: "#E64F68",
   onError: "#FFFFFF",
-  info: "#14B8A6",
+  info: "#15B8B5",
   onInfo: "#FFFFFF",
 
-  // Lines
-  border: "#E7E5E4",
-  borderStrong: "#D6D3D1",
-  divider: "#E7E5E4",
+  // Borders and separators
+  border: "#D9E7F2",
+  borderStrong: "#B8D3E5",
+  divider: "#E4EEF5",
 };
 
 export type ThemeColors = typeof light;
 
 export const defaultScheme = "light" satisfies ColorScheme;
-
 export const themes: { light: ThemeColors; dark?: ThemeColors } = { light };
 
-// In-app theme toggle, only after `dark` exists in `themes`. Call
-// setColorScheme("dark"), setColorScheme("light"), or setColorScheme(null) to
-// follow the device. Every useTheme() consumer re-renders. Persisting the
-// choice and re-applying it on launch is the toggle's job.
+// Native system surfaces follow the scheme shipped by the application.
 export function setColorScheme(scheme: ColorScheme | null) {
-  // RN 0.86 re-reads the device scheme only for the literal "unspecified";
-  // null would pin useColorScheme() to null and the app to light.
   Appearance.setColorScheme?.(scheme ?? "unspecified");
 }
 
-// Keep native surfaces (alerts, pickers, navigation chrome) on the schemes this
-// app ships: light only forces light; once `dark` exists the device decides.
-// Optional call because react-native-web does not implement it.
-setColorScheme?.(themes.dark ? null : defaultScheme);
+setColorScheme(themes.dark ? null : defaultScheme);
 
 export function useTheme(): { scheme: ColorScheme; colors: ThemeColors } {
   const system = useColorScheme();
@@ -100,8 +60,6 @@ export function useTheme(): { scheme: ColorScheme; colors: ThemeColors } {
   return { scheme, colors: themes[scheme] ?? themes.light };
 }
 
-// Themed StyleSheet: returns a hook that builds the sheet from the active
-// scheme's colors and memoizes it until the scheme changes.
 export function makeStyles<T extends StyleSheet.NamedStyles<T> | StyleSheet.NamedStyles<any>>(
   factory: (colors: ThemeColors) => T & StyleSheet.NamedStyles<any>,
 ): () => T {
@@ -110,5 +68,3 @@ export function makeStyles<T extends StyleSheet.NamedStyles<T> | StyleSheet.Name
     return useMemo(() => StyleSheet.create(factory(colors)), [colors]);
   };
 }
-
-
