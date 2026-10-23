@@ -36,12 +36,18 @@ export default function TabsLayout() {
         headerShown: false,
         tabBarActiveTintColor: colors.brandPrimary,
         tabBarInactiveTintColor: colors.muted,
-        tabBarLabelStyle: { fontFamily: fonts.bold, fontSize: 11 },
+        tabBarLabelStyle: { fontFamily: fonts.extrabold, fontSize: 11, marginTop: 2 },
         tabBarItemStyle: { alignSelf: "center" },
         tabBarStyle: {
-          backgroundColor: colors.surface,
-          borderTopColor: colors.divider,
-          ...(Platform.OS === "web" ? { height: 64 } : {}),
+          backgroundColor: colors.surfaceTertiary,
+          borderTopColor: colors.border,
+          borderTopWidth: 1,
+          shadowColor: colors.brand,
+          shadowOpacity: 0.08,
+          shadowRadius: 16,
+          shadowOffset: { width: 0, height: -4 },
+          elevation: 12,
+          ...(Platform.OS === "web" ? { height: 70, paddingTop: 6, paddingBottom: 6 } : { paddingTop: 5 }),
         },
       }}
     >
