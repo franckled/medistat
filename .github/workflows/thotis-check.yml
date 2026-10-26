@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feat/thotis-source-import
+      - feat/thotis-roadmap-foundation
   pull_request:
     branches:
       - feat/thotis-source-import

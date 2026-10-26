@@ -4,7 +4,8 @@ export type CategoryId =
   | "echantillonnage"
   | "epidemiologie"
   | "normalite"
-  | "comparaisons";
+  | "comparaisons"
+  | "cliniques";
 
 export type InputType = "number" | "series" | "select";
 
@@ -64,6 +65,7 @@ export type Calculator = {
   icon: string; // phosphor icon name
   accent: "brandPrimary" | "brandSecondary" | "brandTertiary" | "info";
   description: string;
+  source?: string;
   inputs: InputField[];
   compute: (v: Record<string, string>) => CalcResult;
 };

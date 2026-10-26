@@ -10,6 +10,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 
 import { ErrorBoundary } from "@/src/components/error-boundary";
 import { queryClient } from "@/src/query-client";
+import { ThemePreferenceProvider } from "@/src/theme";
 
 // Disable logbox errors etc so that users can see the app
 // and agent works as expected.
@@ -35,6 +36,7 @@ export default function RootLayout() {
   // instead of a blank app.
   return (
     <ErrorBoundary>
+      <ThemePreferenceProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <SafeAreaProvider>
           <QueryClientProvider client={queryClient}>
@@ -43,11 +45,14 @@ export default function RootLayout() {
                 <Stack.Screen name="(tabs)" />
                 <Stack.Screen name="calculator/[id]" options={{ presentation: "card" }} />
                 <Stack.Screen name="apropos" options={{ presentation: "card" }} />
+                <Stack.Screen name="reglages" options={{ presentation: "card" }} />
+                <Stack.Screen name="historique" options={{ presentation: "card" }} />
               </Stack>
             </KeyboardProvider>
           </QueryClientProvider>
         </SafeAreaProvider>
       </GestureHandlerRootView>
+      </ThemePreferenceProvider>
     </ErrorBoundary>
   );
 }

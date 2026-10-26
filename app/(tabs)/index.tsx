@@ -1,10 +1,13 @@
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useState } from "react";
+import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Icon } from "@/src/components/ui/Icon";
+import { CALCULATORS, CATEGORIES } from "@/src/calculators";
+import { getFavoriteIds, getRecentCalculatorIds, getSavedResults, isResultHistoryEnabled, toggleFavorite, type SavedCalculationResult } from "@/src/utils/activity";
 import { usesNativeTabs } from "@/src/navigation";
 import { makeStyles, useTheme } from "@/src/theme";
 import { fonts, fontSize, radius, spacing } from "@/src/typography";
@@ -15,6 +18,44 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const bottomChrome = usesNativeTabs ? insets.bottom : 0;
+  const [search, setSearch] = useState("");
+  const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
+  const [recentIds, setRecentIds] = useState<string[]>([]);
+  const [recentResults, setRecentResults] = useState<SavedCalculationResult[]>([]);
+  const [historyEnabled, setHistoryEnabled] = useState(false);
+
+  const refreshActivity = useCallback(async () => {
+    const [favorites, recent, history, enabled] = await Promise.all([
+      getFavoriteIds(),
+      getRecentCalculatorIds(),
+      getSavedResults(),
+      isResultHistoryEnabled(),
+    ]);
+    setFavoriteIds(favorites);
+    setRecentIds(recent);
+    setRecentResults(history.slice(0, 3));
+    setHistoryEnabled(enabled);
+  }, []);
+
+  useFocusEffect(useCallback(() => {
+    void refreshActivity();
+  }, [refreshActivity]));
+
+  const query = search.trim().toLocaleLowerCase("fr-FR");
+  const searchResults = query
+    ? CALCULATORS.filter((calc) => {
+        const category = CATEGORIES.find((item) => item.id === calc.category)?.label ?? "";
+        return (calc.title + " " + calc.subtitle + " " + calc.description + " " + category)
+          .toLocaleLowerCase("fr-FR").includes(query);
+      }).slice(0, 6)
+    : [];
+  const favoriteCalculators = favoriteIds
+    .map((id) => CALCULATORS.find((calc) => calc.id === id))
+    .filter((calc) => calc !== undefined);
+  const recentCalculators = recentIds
+    .map((id) => CALCULATORS.find((calc) => calc.id === id))
+    .filter((calc) => calc !== undefined)
+    .slice(0, 4);
 
   const actions = [
     {
@@ -112,10 +153,69 @@ export default function HomeScreen() {
               <Text style={styles.sectionEyebrow}>COMMENCER ICI</Text>
               <Text style={styles.sectionTitle}>Que souhaitez-vous faire ?</Text>
             </View>
-            <View style={styles.sectionEmoji}>
-              <Icon name="Sparkle" size={22} color={colors.brandTertiary} weight="fill" />
-            </View>
+            <Pressable testID="home-settings" accessibilityRole="button" accessibilityLabel="Réglages" onPress={() => router.push("/reglages" as never)} style={styles.settingsButton}>
+              <Icon name="Gear" size={21} color={colors.brandSecondary} weight="bold" />
+            </Pressable>
           </View>
+
+          <View style={styles.searchBox}>
+            <Icon name="MagnifyingGlass" size={22} color={colors.brandPrimary} weight="bold" />
+            <TextInput
+              testID="home-calculator-search"
+              value={search}
+              onChangeText={setSearch}
+              placeholder="Rechercher un calcul, un test, un score…"
+              placeholderTextColor={colors.muted}
+              accessibilityLabel="Rechercher un calcul, un test ou un score"
+              returnKeyType="search"
+              style={styles.searchInput}
+            />
+            {search.length > 0 ? (
+              <Pressable onPress={() => setSearch("")} hitSlop={8} accessibilityRole="button" accessibilityLabel="Effacer la recherche">
+                <Icon name="XCircle" size={20} color={colors.muted} weight="regular" />
+              </Pressable>
+            ) : null}
+          </View>
+
+          {search.trim().length > 0 ? (
+            <View style={styles.searchResults}>
+              <Text style={styles.smallSectionTitle}>{searchResults.length} résultat{searchResults.length > 1 ? "s" : ""}</Text>
+              {searchResults.length === 0 ? (
+                <Text style={styles.emptySearch}>Aucun calcul ne correspond. Essayez un autre terme.</Text>
+              ) : searchResults.map((calc) => {
+                const isFavorite = favoriteIds.includes(calc.id);
+                const accent = colors[calc.accent];
+                return (
+                  <View key={calc.id} style={styles.searchResult}>
+                    <Pressable onPress={() => router.push(("/calculator/" + calc.id) as never)} style={styles.searchResultMain}>
+                      <View style={[styles.searchResultIcon, { backgroundColor: accent + "18" }]}>
+                        <Icon name={calc.icon} size={20} color={accent} weight="duotone" />
+                      </View>
+                      <View style={styles.searchResultText}>
+                        <Text style={styles.activityTitle}>{calc.title}</Text>
+                        <Text style={styles.activitySubtitle}>{calc.subtitle}</Text>
+                      </View>
+                      <Icon name="CaretRight" size={18} color={colors.muted} weight="bold" />
+                    </Pressable>
+                    <Pressable
+                      testID={"favorite-" + calc.id}
+                      onPress={() => { void toggleFavorite(calc.id).then(setFavoriteIds); }}
+                      hitSlop={8}
+                      accessibilityRole="button"
+                      accessibilityLabel={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
+                      style={styles.favoriteButton}
+                    >
+                      <Icon name={isFavorite ? "Heart" : "HeartStraight"} size={21} color={isFavorite ? colors.error : colors.muted} weight={isFavorite ? "fill" : "regular"} />
+                    </Pressable>
+                  </View>
+                );
+              })}
+              <Pressable onPress={() => router.push("/calculs" as never)} style={styles.openAllLink}>
+                <Text style={styles.openAllText}>Voir tous les calculateurs</Text>
+                <Icon name="ArrowRight" size={16} color={colors.brandPrimary} weight="bold" />
+              </Pressable>
+            </View>
+          ) : null}
 
           {actions.map((action) => (
             <Pressable
@@ -147,8 +247,74 @@ export default function HomeScreen() {
             </Pressable>
           ))}
 
+          {favoriteCalculators.length > 0 ? (
+            <View style={styles.activitySection}>
+              <View style={styles.activityHeading}>
+                <Text style={styles.smallSectionTitle}>Vos favoris</Text>
+                <Icon name="Heart" size={18} color={colors.error} weight="fill" />
+              </View>
+              {favoriteCalculators.slice(0, 4).map((calc) => (
+                <Pressable key={calc.id} onPress={() => router.push(("/calculator/" + calc.id) as never)} style={styles.activityRow}>
+                  <View style={[styles.activityIcon, { backgroundColor: colors.error + "14" }]}>
+                    <Icon name={calc.icon} size={20} color={colors.error} weight="duotone" />
+                  </View>
+                  <View style={styles.activityText}>
+                    <Text style={styles.activityTitle}>{calc.title}</Text>
+                    <Text style={styles.activitySubtitle}>{calc.subtitle}</Text>
+                  </View>
+                  <Icon name="CaretRight" size={18} color={colors.muted} weight="bold" />
+                </Pressable>
+              ))}
+            </View>
+          ) : null}
+
+          {recentCalculators.length > 0 ? (
+            <View style={styles.activitySection}>
+              <View style={styles.activityHeading}>
+                <Text style={styles.smallSectionTitle}>Derniers outils utilisés</Text>
+                <Icon name="ClockCounterClockwise" size={18} color={colors.info} weight="duotone" />
+              </View>
+              {recentCalculators.map((calc) => (
+                <Pressable key={calc.id} onPress={() => router.push(("/calculator/" + calc.id) as never)} style={styles.activityRow}>
+                  <View style={[styles.activityIcon, { backgroundColor: colors.info + "18" }]}>
+                    <Icon name={calc.icon} size={20} color={colors.info} weight="duotone" />
+                  </View>
+                  <View style={styles.activityText}>
+                    <Text style={styles.activityTitle}>{calc.title}</Text>
+                    <Text style={styles.activitySubtitle}>{calc.subtitle}</Text>
+                  </View>
+                  <Icon name="CaretRight" size={18} color={colors.muted} weight="bold" />
+                </Pressable>
+              ))}
+            </View>
+          ) : null}
+
+          {historyEnabled && recentResults.length > 0 ? (
+            <View style={styles.activitySection}>
+              <View style={styles.activityHeading}>
+                <Text style={styles.smallSectionTitle}>Résultats récents</Text>
+                <Pressable onPress={() => router.push("/historique" as never)} style={styles.openAllLink}>
+                  <Text style={styles.openAllText}>Tout voir</Text>
+                  <Icon name="ArrowRight" size={15} color={colors.brandPrimary} weight="bold" />
+                </Pressable>
+              </View>
+              {recentResults.map((entry) => (
+                <Pressable key={entry.id} onPress={() => router.push("/historique" as never)} style={styles.activityRow}>
+                  <View style={[styles.activityIcon, { backgroundColor: colors.brandPrimary + "18" }]}>
+                    <Icon name="ChartBar" size={20} color={colors.brandPrimary} weight="duotone" />
+                  </View>
+                  <View style={styles.activityText}>
+                    <Text style={styles.activityTitle}>{entry.calculatorTitle}</Text>
+                    <Text style={styles.activitySubtitle}>{new Date(entry.savedAt).toLocaleString("fr-FR")}</Text>
+                  </View>
+                  <Icon name="CaretRight" size={18} color={colors.muted} weight="bold" />
+                </Pressable>
+              ))}
+            </View>
+          ) : null}
+
           <LinearGradient
-            colors={[colors.surfaceSecondary, "#E7F2FF"]}
+            colors={[colors.surfaceSecondary, colors.surfaceTertiary]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.reassuranceCard}
@@ -171,6 +337,16 @@ export default function HomeScreen() {
           >
             <Icon name="Info" size={18} color={colors.muted} weight="bold" />
             <Text style={styles.aboutText}>À propos de Thotis</Text>
+            <Icon name="CaretRight" size={17} color={colors.muted} weight="bold" />
+          </Pressable>
+
+          <Pressable
+            testID="home-about-settings"
+            onPress={() => router.push("/reglages" as never)}
+            style={({ pressed }) => [styles.aboutLink, pressed && styles.cardPressed]}
+          >
+            <Icon name="Gear" size={18} color={colors.muted} weight="bold" />
+            <Text style={styles.aboutText}>Réglages et confidentialité</Text>
             <Icon name="CaretRight" size={17} color={colors.muted} weight="bold" />
           </Pressable>
 
@@ -262,6 +438,26 @@ const useStyles = makeStyles((colors) => ({
   miniLegend: { flexDirection: "row", alignItems: "center", gap: 6 },
   miniLegendText: { color: "#DDFBFA", fontFamily: fonts.semibold, fontSize: 11 },
   body: { padding: spacing.lg, gap: spacing.md },
+  settingsButton: { width: 42, height: 42, borderRadius: 15, alignItems: "center", justifyContent: "center", backgroundColor: colors.brandSecondary + "18", borderWidth: 1, borderColor: colors.brandSecondary + "30" },
+  searchBox: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md, minHeight: 54, borderRadius: radius.lg, backgroundColor: colors.surfaceTertiary, borderWidth: 1.5, borderColor: colors.border },
+  searchInput: { flex: 1, minWidth: 0, paddingVertical: spacing.md, fontFamily: fonts.semibold, fontSize: fontSize.base, color: colors.onSurface },
+  searchResults: { padding: spacing.md, gap: spacing.sm, borderRadius: radius.lg, backgroundColor: colors.surfaceTertiary, borderWidth: 1, borderColor: colors.border },
+  searchResult: { flexDirection: "row", alignItems: "center", gap: spacing.xs, borderBottomWidth: 1, borderBottomColor: colors.divider, paddingVertical: spacing.xs },
+  searchResultMain: { flex: 1, minWidth: 0, flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: spacing.xs },
+  searchResultIcon: { width: 38, height: 38, borderRadius: 12, alignItems: "center", justifyContent: "center" },
+  searchResultText: { flex: 1, minWidth: 0, gap: 2 },
+  favoriteButton: { padding: spacing.sm, alignItems: "center", justifyContent: "center" },
+  emptySearch: { fontFamily: fonts.semibold, fontSize: fontSize.sm, color: colors.muted, lineHeight: 20, paddingVertical: spacing.sm },
+  activitySection: { padding: spacing.md, gap: spacing.sm, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surfaceTertiary },
+  activityHeading: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.sm, paddingBottom: spacing.xs },
+  smallSectionTitle: { fontFamily: fonts.extrabold, fontSize: fontSize.base, color: colors.onSurface },
+  activityRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: spacing.sm, borderTopWidth: 1, borderTopColor: colors.divider },
+  activityIcon: { width: 40, height: 40, borderRadius: 13, alignItems: "center", justifyContent: "center" },
+  activityText: { flex: 1, minWidth: 0, gap: 2 },
+  activityTitle: { fontFamily: fonts.extrabold, fontSize: fontSize.sm, color: colors.onSurface },
+  activitySubtitle: { fontFamily: fonts.semibold, fontSize: fontSize.xs, color: colors.muted, lineHeight: 17 },
+  openAllLink: { flexDirection: "row", alignItems: "center", gap: 4, paddingVertical: spacing.xs },
+  openAllText: { fontFamily: fonts.extrabold, fontSize: fontSize.xs, color: colors.brandPrimary },
   sectionHeading: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: spacing.sm, marginBottom: spacing.xs },
   sectionHeadingText: { flex: 1, gap: 3 },
   sectionEyebrow: { color: colors.brandPrimary, fontFamily: fonts.extrabold, fontSize: 10, letterSpacing: 1.3 },
@@ -290,7 +486,7 @@ const useStyles = makeStyles((colors) => ({
   actionDesc: { fontFamily: fonts.semibold, fontSize: 13, color: colors.muted, lineHeight: 18 },
   arrowBubble: { width: 34, height: 34, borderRadius: 12, backgroundColor: colors.surfaceSecondary, alignItems: "center", justifyContent: "center" },
   reassuranceCard: { flexDirection: "row", gap: spacing.md, padding: spacing.lg, borderRadius: 20, marginTop: spacing.sm },
-  reassuranceIcon: { width: 42, height: 42, borderRadius: 14, backgroundColor: "#FFFFFF", alignItems: "center", justifyContent: "center" },
+  reassuranceIcon: { width: 42, height: 42, borderRadius: 14, backgroundColor: colors.surfaceTertiary, alignItems: "center", justifyContent: "center" },
   reassuranceCopy: { flex: 1, gap: 4 },
   reassuranceTitle: { fontFamily: fonts.extrabold, fontSize: 15, color: colors.onSurface },
   reassuranceText: { fontFamily: fonts.semibold, fontSize: 13, color: colors.onSurfaceSecondary, lineHeight: 19 },

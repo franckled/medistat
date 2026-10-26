@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from "expo-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -11,6 +11,7 @@ import { Field } from "@/src/components/ui/Field";
 import { Header } from "@/src/components/ui/Header";
 import { Icon } from "@/src/components/ui/Icon";
 import { makeStyles, useTheme } from "@/src/theme";
+import { recordCalculatorUse, saveCalculationResult } from "@/src/utils/activity";
 import { fonts, fontSize, radius, spacing } from "@/src/typography";
 
 export default function CalculatorScreen() {
@@ -29,6 +30,10 @@ export default function CalculatorScreen() {
   const [values, setValues] = useState<Record<string, string>>(initial);
   const [result, setResult] = useState<CalcResult | null>(null);
 
+  useEffect(() => {
+    if (calc) void recordCalculatorUse(calc.id);
+  }, [calc?.id]);
+
   if (!calc) {
     return (
       <View style={styles.screen}>
@@ -43,7 +48,9 @@ export default function CalculatorScreen() {
   const accent = colors[calc.accent];
 
   const onCompute = () => {
-    setResult(calc.compute(values));
+    const computed = calc.compute(values);
+    setResult(computed);
+    if (!computed.error) void saveCalculationResult(calc.id, calc.title, computed);
   };
 
   const onReset = () => {
@@ -63,6 +70,12 @@ export default function CalculatorScreen() {
           <Icon name="Info" size={18} color={accent} weight="fill" />
           <Text style={styles.descText}>{calc.description}</Text>
         </View>
+        {calc.source ? (
+          <View style={styles.sourceBox}>
+            <Text style={styles.sourceLabel}>Référence de la formule</Text>
+            <Text style={styles.sourceText}>{calc.source}</Text>
+          </View>
+        ) : null}
 
         <View style={styles.form}>
           {calc.inputs.map((f) => (
@@ -110,6 +123,9 @@ const useStyles = makeStyles((colors) => ({
     borderWidth: 1,
   },
   descText: { flex: 1, fontFamily: fonts.semibold, fontSize: fontSize.sm, color: colors.onSurface, lineHeight: 19 },
+  sourceBox: { padding: spacing.md, borderRadius: radius.md, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surfaceSecondary, gap: spacing.xs },
+  sourceLabel: { fontFamily: fonts.extrabold, fontSize: fontSize.xs, color: colors.brandPrimary, textTransform: "uppercase", letterSpacing: 0.4 },
+  sourceText: { fontFamily: fonts.regular, fontSize: fontSize.xs, color: colors.onSurfaceSecondary, lineHeight: 17 },
   form: { gap: spacing.lg },
   buttons: { gap: spacing.sm },
   errorBox: {

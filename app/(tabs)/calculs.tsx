@@ -1,5 +1,5 @@
-import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -10,6 +10,7 @@ import { Icon } from "@/src/components/ui/Icon";
 import { usesNativeTabs } from "@/src/navigation";
 import { makeStyles, useTheme } from "@/src/theme";
 import { fonts, fontSize, radius, spacing } from "@/src/typography";
+import { getFavoriteIds, toggleFavorite } from "@/src/utils/activity";
 
 export default function CalculsScreen() {
   const styles = useStyles();
@@ -17,7 +18,16 @@ export default function CalculsScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const [cat, setCat] = useState(CATEGORIES[0].id);
+  const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const bottomChrome = usesNativeTabs ? insets.bottom : 0;
+
+  useFocusEffect(useCallback(() => {
+    let active = true;
+    void getFavoriteIds().then((ids) => {
+      if (active) setFavoriteIds(ids);
+    });
+    return () => { active = false; };
+  }, []));
 
   const list = CALCULATORS.filter((c) => c.category === cat);
 
@@ -64,21 +74,38 @@ export default function CalculsScreen() {
         {list.map((calc) => {
           const accent = colors[calc.accent];
           return (
-            <Pressable
-              key={calc.id}
-              testID={`calc-${calc.id}`}
-              onPress={() => router.push(`/calculator/${calc.id}` as never)}
-              style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
-            >
-              <View style={[styles.icon, { backgroundColor: accent + "1A" }]}>
-                <Icon name={calc.icon} size={26} color={accent} weight="duotone" />
-              </View>
-              <View style={styles.cardText}>
-                <Text style={styles.cardTitle}>{calc.title}</Text>
-                <Text style={styles.cardSub}>{calc.subtitle}</Text>
-              </View>
-              <Icon name="CaretRight" size={20} color={colors.muted} weight="bold" />
-            </Pressable>
+            <View key={calc.id} style={styles.card}>
+              <Pressable
+                testID={`calc-${calc.id}`}
+                onPress={() => router.push(`/calculator/${calc.id}` as never)}
+                style={({ pressed }) => [styles.cardMain, pressed && styles.cardPressed]}
+                accessibilityRole="button"
+              >
+                <View style={[styles.icon, { backgroundColor: accent + "1A" }]}>
+                  <Icon name={calc.icon} size={26} color={accent} weight="duotone" />
+                </View>
+                <View style={styles.cardText}>
+                  <Text style={styles.cardTitle}>{calc.title}</Text>
+                  <Text style={styles.cardSub}>{calc.subtitle}</Text>
+                </View>
+                <Icon name="CaretRight" size={20} color={colors.muted} weight="bold" />
+              </Pressable>
+              <Pressable
+                testID={`calc-favorite-${calc.id}`}
+                onPress={() => { void toggleFavorite(calc.id).then(setFavoriteIds); }}
+                accessibilityRole="button"
+                accessibilityLabel={favoriteIds.includes(calc.id) ? "Retirer des favoris" : "Ajouter aux favoris"}
+                style={styles.favoriteButton}
+                hitSlop={8}
+              >
+                <Icon
+                  name={favoriteIds.includes(calc.id) ? "Heart" : "HeartStraight"}
+                  size={22}
+                  color={favoriteIds.includes(calc.id) ? colors.error : colors.muted}
+                  weight={favoriteIds.includes(calc.id) ? "fill" : "regular"}
+                />
+              </Pressable>
+            </View>
           );
         })}
       </ScrollView>
@@ -114,6 +141,8 @@ const useStyles = makeStyles((colors) => ({
     borderColor: colors.border,
   },
   cardPressed: { opacity: 0.85, transform: [{ scale: 0.99 }] },
+  cardMain: { flex: 1, minWidth: 0, flexDirection: "row", alignItems: "center", gap: spacing.lg },
+  favoriteButton: { padding: spacing.sm, alignItems: "center", justifyContent: "center" },
   icon: {
     width: 52,
     height: 52,
