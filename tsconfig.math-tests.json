@@ -14,6 +14,7 @@
     "src/stats/special.ts",
     "src/stats/descriptive.ts",
     "src/calculators/types.ts",
+    "src/calculators/cliniques.ts",
     "src/calculators/regression.ts",
     "src/calculators/survie.ts"
   ]
