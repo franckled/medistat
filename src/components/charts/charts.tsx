@@ -285,7 +285,7 @@ export function SurvivalChart({
         {spec.groups.map((group, index) => (
           <View key={group.label} style={legendStyles.item}>
             <View style={[legendStyles.dot, { backgroundColor: palette[index % palette.length] }]} />
-            <Text style={legendStyles.text}>{group.label}</Text>
+            <Text style={[legendStyles.text, { color: colors.onSurface }]}>{group.label}</Text>
           </View>
         ))}
       </View>
