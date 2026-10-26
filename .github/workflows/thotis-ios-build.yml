@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   ios-build:
-    name: Build THOTIS for iOS with EAS
+    name: Build and submit THOTIS for iOS
     runs-on: ubuntu-latest
     steps:
       - name: Check out THOTIS
@@ -50,7 +50,27 @@ jobs:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: eas project:info
 
-      - name: Build iOS production
+      - name: Prepare App Store Connect credentials
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const file = 'eas.json';
+          const config = JSON.parse(fs.readFileSync(file, 'utf8'));
+          const ios = config.submit?.production?.ios;
+          if (!ios) throw new Error('Missing submit.production.ios configuration in eas.json');
+
+          if (ios.ascApiKeyPath && !fs.existsSync(ios.ascApiKeyPath)) {
+            console.log('Local App Store Connect API key is not present on this runner; using the key managed by EAS, if configured.');
+            delete ios.ascApiKeyPath;
+            delete ios.ascApiKeyId;
+            delete ios.ascApiKeyIssuerId;
+            fs.writeFileSync(file, JSON.stringify(config, null, 2) + '\n');
+          } else {
+            console.log('Using the configured local App Store Connect API key.');
+          }
+          NODE
+
+      - name: Build iOS production and submit to Apple
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: eas build --platform ios --profile production --non-interactive
+        run: eas build --platform ios --profile production --auto-submit --non-interactive
