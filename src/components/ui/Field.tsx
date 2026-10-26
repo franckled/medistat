@@ -73,7 +73,7 @@ export function Field({ field, value, onChange }: Props) {
           isSeries && styles.inputSeries,
           {
             borderColor: focused ? colors.brandPrimary : colors.border,
-            backgroundColor: focused ? "#FFFFFF" : colors.surfaceTertiary,
+            backgroundColor: colors.surfaceTertiary,
           },
           focused && styles.inputFocused,
         ]}
