@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, createElement, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { Appearance, StyleSheet, useColorScheme, type ImageStyle, type TextStyle, type ViewStyle } from "react-native";
 
 import { storage } from "@/src/utils/storage";
@@ -123,11 +123,7 @@ export function ThemePreferenceProvider({ children }: { children: ReactNode }) {
     [preference, ready, setPreference],
   );
 
-  return (
-    <ThemePreferenceContext.Provider value={value}>
-      {children}
-    </ThemePreferenceContext.Provider>
-  );
+  return createElement(ThemePreferenceContext.Provider, { value }, children);
 }
 
 export function useThemePreference() {
