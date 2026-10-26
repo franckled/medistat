@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "rootDir": "src",
+    "outDir": ".tmp-math-tests",
+    "types": []
+  },
+  "files": [
+    "src/stats/special.ts",
+    "src/stats/descriptive.ts",
+    "src/calculators/types.ts",
+    "src/calculators/cliniques.ts",
+    "src/calculators/regression.ts",
+    "src/calculators/survie.ts"
+  ]
+}
