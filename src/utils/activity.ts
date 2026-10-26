@@ -47,7 +47,7 @@ export async function recordCalculatorUse(calculatorId: string): Promise<void> {
 }
 
 export async function isResultHistoryEnabled(): Promise<boolean> {
-  return (await storage.getItem(HISTORY_ENABLED_KEY, false)) === true;
+  return (await storage.getItem<boolean>(HISTORY_ENABLED_KEY, false)) === true;
 }
 
 export async function setResultHistoryEnabled(enabled: boolean): Promise<void> {
