@@ -183,7 +183,114 @@ export function CIChart({ spec }: { spec: Extract<ChartSpec, { type: "ci" }> }) 
 export function ResultChart({ spec }: { spec: ChartSpec }) {
   if (spec.type === "ci") return <CIChart spec={spec} />;
   if (spec.type === "groups") return <GroupsChart spec={spec} />;
+  if (spec.type === "regression") return <RegressionResultChart spec={spec} />;
+  if (spec.type === "survival") return <SurvivalChart spec={spec} />;
   return <CompareChart spec={spec} />;
+}
+
+/** Scatter plot and fitted least-squares line for the values actually entered. */
+export function RegressionResultChart({
+  spec,
+}: {
+  spec: Extract<ChartSpec, { type: "regression" }>;
+}) {
+  const { colors } = useTheme();
+  const [w, onLayout] = useWidth();
+  const h = 205;
+  const padL = 38;
+  const padR = 14;
+  const padTop = 16;
+  const baseline = h - 34;
+  const xValues = spec.points.map((p) => p.x);
+  const yValues = spec.points.map((p) => p.y);
+  const rawXMin = Math.min(...xValues);
+  const rawXMax = Math.max(...xValues);
+  const xPad = (rawXMax - rawXMin || Math.max(1, Math.abs(rawXMax) * 0.1)) * 0.08;
+  const xMin = rawXMin - xPad;
+  const xMax = rawXMax + xPad;
+  const predictedEnds = [spec.intercept + spec.slope * xMin, spec.intercept + spec.slope * xMax];
+  const rawYMin = Math.min(...yValues, ...predictedEnds);
+  const rawYMax = Math.max(...yValues, ...predictedEnds);
+  const yPad = (rawYMax - rawYMin || Math.max(1, Math.abs(rawYMax) * 0.1)) * 0.1;
+  const yMin = rawYMin - yPad;
+  const yMax = rawYMax + yPad;
+  const xToPx = (x: number) => padL + ((x - xMin) / (xMax - xMin || 1)) * (w - padL - padR);
+  const yToPx = (y: number) => baseline - ((y - yMin) / (yMax - yMin || 1)) * (baseline - padTop);
+
+  return (
+    <View onLayout={onLayout} style={{ width: "100%" }}>
+      <Svg width={w} height={h}>
+        <Line x1={padL} y1={baseline} x2={w - padR} y2={baseline} stroke={colors.border} strokeWidth={1.5} />
+        <Line x1={padL} y1={padTop} x2={padL} y2={baseline} stroke={colors.border} strokeWidth={1.5} />
+        <Line x1={xToPx(xMin)} y1={yToPx(spec.intercept + spec.slope * xMin)} x2={xToPx(xMax)} y2={yToPx(spec.intercept + spec.slope * xMax)} stroke={colors.brandSecondary} strokeWidth={2.5} />
+        {spec.points.map((point, index) => (
+          <Circle key={index} cx={xToPx(point.x)} cy={yToPx(point.y)} r={4.5} fill={colors.info} stroke={colors.surfaceTertiary} strokeWidth={1.5} />
+        ))}
+        <SvgText x={padL} y={h - 6} fill={colors.muted} fontSize={11} textAnchor="start" fontFamily={fonts.semibold}>X</SvgText>
+        <SvgText x={8} y={padTop + 4} fill={colors.muted} fontSize={11} textAnchor="start" fontFamily={fonts.semibold}>Y</SvgText>
+      </Svg>
+      <Text style={{ textAlign: "center", color: colors.muted, fontFamily: fonts.semibold, fontSize: fontSize.sm }}>
+        Nuage des observations et droite des moindres carrés
+      </Text>
+    </View>
+  );
+}
+
+/** Kaplan–Meier step curves for the two analysed groups. */
+export function SurvivalChart({
+  spec,
+}: {
+  spec: Extract<ChartSpec, { type: "survival" }>;
+}) {
+  const { colors } = useTheme();
+  const [w, onLayout] = useWidth();
+  const h = 220;
+  const padL = 42;
+  const padR = 16;
+  const padTop = 18;
+  const baseline = h - 42;
+  const maxTime = Math.max(1, ...spec.groups.map((g) => g.maxTime));
+  const xToPx = (x: number) => padL + (x / maxTime) * (w - padL - padR);
+  const yToPx = (survival: number) => baseline - survival * (baseline - padTop);
+  const palette = [colors.brandPrimary, colors.brandSecondary, colors.info, colors.success];
+
+  return (
+    <View onLayout={onLayout} style={{ width: "100%" }}>
+      <Svg width={w} height={h}>
+        {[0, 0.5, 1].map((tick) => (
+          <G key={tick}>
+            <Line x1={padL} y1={yToPx(tick)} x2={w - padR} y2={yToPx(tick)} stroke={colors.divider} strokeWidth={1} strokeDasharray={tick === 0 ? undefined : "3 3"} />
+            <SvgText x={padL - 7} y={yToPx(tick) + 4} fill={colors.muted} fontSize={10} textAnchor="end" fontFamily={fonts.semibold}>{Math.round(tick * 100)}%</SvgText>
+          </G>
+        ))}
+        <Line x1={padL} y1={padTop} x2={padL} y2={baseline} stroke={colors.border} strokeWidth={1.5} />
+        <Line x1={padL} y1={baseline} x2={w - padR} y2={baseline} stroke={colors.border} strokeWidth={1.5} />
+        {spec.groups.map((group, groupIndex) => {
+          const points = group.points.filter((point) => point.time > 0);
+          let previousSurvival = 1;
+          let path = `M${xToPx(0).toFixed(1)},${yToPx(1).toFixed(1)}`;
+          for (const point of points) {
+            path += ` L${xToPx(point.time).toFixed(1)},${yToPx(previousSurvival).toFixed(1)}`;
+            path += ` L${xToPx(point.time).toFixed(1)},${yToPx(point.survival).toFixed(1)}`;
+            previousSurvival = point.survival;
+          }
+          path += ` L${xToPx(group.maxTime).toFixed(1)},${yToPx(previousSurvival).toFixed(1)}`;
+          return <Path key={group.label} d={path} stroke={palette[groupIndex % palette.length]} strokeWidth={2.8} fill="none" strokeLinejoin="round" />;
+        })}
+        <SvgText x={padL} y={baseline + 18} fill={colors.muted} fontSize={10} textAnchor="middle" fontFamily={fonts.semibold}>0</SvgText>
+        <SvgText x={w - padR} y={baseline + 18} fill={colors.muted} fontSize={10} textAnchor="end" fontFamily={fonts.semibold}>{fmt(maxTime, 1)}</SvgText>
+        <SvgText x={(padL + w - padR) / 2} y={h - 5} fill={colors.muted} fontSize={10} textAnchor="middle" fontFamily={fonts.semibold}>Temps de suivi</SvgText>
+      </Svg>
+      <View style={legendStyles.row}>
+        {spec.groups.map((group, index) => (
+          <View key={group.label} style={legendStyles.item}>
+            <View style={[legendStyles.dot, { backgroundColor: palette[index % palette.length] }]} />
+            <Text style={legendStyles.text}>{group.label}</Text>
+          </View>
+        ))}
+      </View>
+    </View>
+  );
 }
 
 /** Bar chart of group means with ± SD error bars (k ≥ 3 groups). */

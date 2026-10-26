@@ -113,4 +113,48 @@ export const CONFIDENCE_OPTIONS = [
   { label: "90 %", value: "90" },
   { label: "95 %", value: "95" },
   { label: "99 %", value: "99" },
+];/**
+ * Parse a list of finite numeric values while preserving French decimal commas.
+ * Use spaces/newlines or semicolons between observations: "12,4 13,1" or "12,4;13,1".
+ * A compact list such as "1,2,3" is treated as comma-separated integers.
+ * Returns null if any token is not a finite number.
+ */
+export function parseNumericSeries(raw: string): number[] | null {
+  const input = raw.trim();
+  if (!input) return [];
+  let tokens: string[];
+  if (/[;\s]/.test(input)) {
+    tokens = input.split(/[;\s]+/).filter(Boolean);
+  } else {
+    const commaCount = (input.match(/,/g) ?? []).length;
+    tokens = commaCount > 1 ? input.split(",") : [input];
+  }
+  const values = tokens.map((token) => Number(token.trim().replace(",", ".")));
+  return values.length > 0 && values.every(Number.isFinite) ? values : null;
+}
+
+export function series(v: Record<string, string>, key: string): number[] {
+  return parseNumericSeries((v[key] ?? "").toString()) ?? [];
+}
+
+/** z value for a two-sided confidence level given in percent (e.g. 95). */
+export function zForConfidence(pct: number): number {
+  const alpha = 1 - pct / 100;
+  return zTwoSided(alpha);
+}
+
+import { normalQuantile } from "@/src/stats/special";
+
+export function zTwoSided(alpha: number): number {
+  return normalQuantile(1 - alpha / 2);
+}
+
+export function zOneSided(alpha: number): number {
+  return normalQuantile(1 - alpha);
+}
+
+export const CONFIDENCE_OPTIONS = [
+  { label: "90 %", value: "90" },
+  { label: "95 %", value: "95" },
+  { label: "99 %", value: "99" },
 ];

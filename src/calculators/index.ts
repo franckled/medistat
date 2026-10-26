@@ -3,6 +3,8 @@ import { echantillonnage } from "./echantillonnage";
 import { epidemiologie } from "./epidemiologie";
 import { normalite } from "./normalite";
 import { cliniques } from "./cliniques";
+import { regression } from "./regression";
+import { survie } from "./survie";
 import { Calculator, Category } from "./types";
 
 export const CATEGORIES: Category[] = [
@@ -11,6 +13,7 @@ export const CATEGORIES: Category[] = [
   { id: "normalite", label: "Normalité & Variances", icon: "Waveform", accent: "brandTertiary" },
   { id: "comparaisons", label: "Comparaisons", icon: "ArrowsLeftRight", accent: "brandSecondary" },
   { id: "cliniques", label: "Calculatrices cliniques", icon: "FirstAidKit", accent: "info" },
+  { id: "survie", label: "Survie", icon: "Heartbeat", accent: "brandSecondary" },
 ];
 
 export const CALCULATORS: Calculator[] = [
@@ -19,6 +22,8 @@ export const CALCULATORS: Calculator[] = [
   ...normalite,
   ...comparaisons,
   ...cliniques,
+  ...regression,
+  ...survie,
 ];
 
 export function getCalculator(id: string): Calculator | undefined {
