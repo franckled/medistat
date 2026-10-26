@@ -99,7 +99,7 @@ export function zForConfidence(pct: number): number {
   return zTwoSided(alpha);
 }
 
-import { normalQuantile } from "@/src/stats/special";
+import { normalQuantile } from "../stats/special";
 
 export function zTwoSided(alpha: number): number {
   return normalQuantile(1 - alpha / 2);

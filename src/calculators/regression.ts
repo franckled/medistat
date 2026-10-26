@@ -1,5 +1,5 @@
-import { fmt } from "@/src/stats/descriptive";
-import { normalQuantile, tQuantile, tTwoSided } from "@/src/stats/special";
+import { fmt } from "../stats/descriptive";
+import { normalQuantile, tQuantile, tTwoSided } from "../stats/special";
 import { Calculator, CalcResult, parseNumericSeries } from "./types";
 
 function error(message: string): CalcResult {

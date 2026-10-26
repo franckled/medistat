@@ -18,3 +18,5 @@ web-build/
 
 expo-env.d.ts
 # @end expo-cli
+# Temporary JavaScript build used by dependency-free statistical tests
+.tmp-math-tests/

@@ -1,4 +1,4 @@
-import { chi2Upper, normalQuantile } from "@/src/stats/special";
+import { chi2Upper, normalQuantile } from "../stats/special";
 import { Calculator, CalcResult, parseNumericSeries } from "./types";
 
 type SurvivalPoint = { time: number; survival: number };

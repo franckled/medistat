@@ -5,6 +5,7 @@ on:
     branches:
       - feat/thotis-source-import
       - feat/thotis-roadmap-foundation
+      - feat/thotis-survival-regression
   pull_request:
     branches:
       - feat/thotis-source-import
@@ -38,6 +39,9 @@ jobs:
 
       - name: TypeScript check
         run: yarn typecheck
+
+      - name: Statistical calculation regression tests
+        run: yarn test:math
 
       - name: Expo Doctor
         run: yarn doctor

@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "rootDir": "src",
+    "outDir": ".tmp-math-tests",
+    "types": []
+  },
+  "files": [
+    "src/stats/special.ts",
+    "src/stats/descriptive.ts",
+    "src/calculators/types.ts",
+    "src/calculators/regression.ts",
+    "src/calculators/survie.ts"
+  ]
+}
